@@ -9,7 +9,9 @@
 ")" return(tPF);
 "{" return(tAO);
 "}" return(tAF); 
-"const" return(tCONST); 
+"const" return(tCONST);
+"if" return(tIF);
+"else" return (tELSE); 
 "int" return(tINT);
 "+" return(tPLUS); 
 "-" return(tMOINS);
