@@ -1,15 +1,19 @@
-#include "symboleTable.h"
+#include "symbolTable.h"
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <stddef.h>
 
 
-
-Symbol* symbolTab;;
+Symbol* symbolTab;
 int currentIndex = 0;
+int currentTempIndex = 100;
 int currentDepth = 0;
 
 
 void initSymbolTab()
 {
-	symbolTab = malloc(100 * sizeof(Symbol));
+	symbolTab = malloc(103 * sizeof(Symbol));
 }
 
 
@@ -18,11 +22,24 @@ void freeSymbolTab()
 	free(symbolTab);
 }
 
-
-void addSymbol(char* id, int isConst) 
+void suprimer_temp_var()
 {
-    Symbol newSymbol = { id, isConst, currentIndex * 4, currentDepth, 0 };
+	currentTempIndex = 100;
+}
+
+int new_temp_var()
+{
+
+    return currentTempIndex++ ;
+    
+
+}
+
+void add_symbol(char* id, int isConst) 
+{
+   	Symbol newSymbol = { id, isConst, currentDepth};
 	symbolTab[currentIndex] = newSymbol;
+	printf("index: %d ", currentIndex);
 	currentIndex++;
 }
 
@@ -31,12 +48,14 @@ int findSymbolById(char* id)
 {
 	for(int i = currentIndex - 1; i >= 0; i--)
 	{
-		if(symbolTab[i].id == id)
+		if(strcmp(symbolTab[i].id, id)==0)
 		{
-			return symbolTab[i].addr; // = i
+			return i; // = i
 		}
 	}
 }
+
+
 
 
 void incrementDepth()
@@ -52,11 +71,6 @@ void decrementDepth()
 	currentDepth--;
 }
 
-
-int isSymbolInit(Symbol symbol)
-{
-	return symbol.isInit;
-}
 
 
 int isSymbolConst(Symbol symbol)

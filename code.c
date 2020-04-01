@@ -1,1 +1,1 @@
-main(){ int i, j,k,r;i =3;j=4;k=8;printf (i);r=(3+4)*(3+8/4);printf ( r );}
+main(){ int i; int j;int k;int r;i =3;j=4;k=8;printf (i);r=(i+j)*(i+k/j);printf (r);}

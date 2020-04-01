@@ -1,7 +1,24 @@
+Non-terminaux inutiles dans la grammaire
+
+   DefinitionConst
+   DefinitionNC
+
+
 Terminaux inutilisés dans la grammaire
 
    tEQ
    tCONST
+   tIF
+   tELSE
+
+
+Règles inutiles dans la grammaire
+
+   22 DefinitionConst: tCONST tINT tID DefinitionNC tPV
+   23                | tCONST tINT tID tEGAL Expression tPV
+
+   24 DefinitionNC: %empty
+   25             | tVR tID DefinitionNC
 
 
 Grammaire
@@ -10,76 +27,87 @@ Grammaire
 
     1 File: Main
 
-    2 Main: tMAIN tPO tPF tAO Body tAF
+    2 $@1: %empty
 
-    3 Body: %empty
-    4     | Definition Body
-    5     | Affectation Body
-    6     | Fonction Body
+    3 Main: tMAIN $@1 tPO tPF tAO Body tAF
 
-    7 Definition: tINT tID DefinitionN tPV
-    8           | tINT tID tEGAL Expression tPV
+    4 Body: %empty
+    5     | Definition Body
+    6     | Affectation Body
+    7     | Fonction Body
 
-    9 DefinitionN: %empty
-   10            | tVR tID DefinitionN
+    8 Definition: tINT tID DefinitionN tPV
+    9           | tINT tID tEGAL Expression tPV
 
-   11 Affectation: tID tEGAL Expression tPV
+   10 DefinitionN: %empty
 
-   12 Expression: tID
-   13           | tNB
-   14           | tPO Expression tPF
-   15           | Expression tPLUS Expression
-   16           | Expression tMOINS Expression
-   17           | Expression tDIV Expression
-   18           | Expression tFOIS Expression
+   11 $@2: %empty
 
-   19 Fonction: tPRINTF tPO tID tPF tPV
+   12 DefinitionN: tVR tID $@2 DefinitionN
+
+   13 Affectation: tID tEGAL Expression tPV
+
+   14 Expression: tID
+   15           | tNB
+   16           | tPO Expression tPF
+   17           | Expression tPLUS Expression
+   18           | Expression tMOINS Expression
+   19           | Expression tDIV Expression
+   20           | Expression tFOIS Expression
+
+   21 Fonction: tPRINTF tPO tID tPF tPV
 
 
 Terminaux, suivis des règles où ils apparaissent
 
 $end (0) 0
 error (256)
-tMAIN (258) 2
-tINT (259) 7 8
+tMAIN (258) 3
+tINT (259) 8 9
 tEQ (260)
-tPO (261) 2 14 19
-tPF (262) 2 14 19
-tAO (263) 2
-tAF (264) 2
-tPV (265) 7 8 11 19
-tVR (266) 10
-tPLUS (267) 15
-tMOINS (268) 16
-tDIV (269) 17
-tFOIS (270) 18
-tPRINTF (271) 19
-tEGAL (272) 8 11
+tPO (261) 3 16 21
+tPF (262) 3 16 21
+tAO (263) 3
+tAF (264) 3
+tPV (265) 8 9 13 21
+tVR (266) 12
+tPLUS (267) 17
+tMOINS (268) 18
+tDIV (269) 19
+tFOIS (270) 20
+tPRINTF (271) 21
+tEGAL (272) 9 13
 tCONST (273)
-tNB (274) 13
-tID (275) 7 8 10 11 12 19
+tIF (274)
+tELSE (275)
+tNB (276) 15
+tID (277) 8 9 12 13 14 21
 
 
 Non-terminaux, suivis des règles où ils apparaissent
 
-$accept (21)
+$accept (23)
     à gauche: 0
-File (22)
+File (24)
     à gauche: 1, à droite: 0
-Main (23)
-    à gauche: 2, à droite: 1
-Body (24)
-    à gauche: 3 4 5 6, à droite: 2 4 5 6
-Definition (25)
-    à gauche: 7 8, à droite: 4
-DefinitionN (26)
-    à gauche: 9 10, à droite: 7 10
-Affectation (27)
-    à gauche: 11, à droite: 5
-Expression (28)
-    à gauche: 12 13 14 15 16 17 18, à droite: 8 11 14 15 16 17 18
-Fonction (29)
-    à gauche: 19, à droite: 6
+Main (25)
+    à gauche: 3, à droite: 1
+$@1 (26)
+    à gauche: 2, à droite: 3
+Body (27)
+    à gauche: 4 5 6 7, à droite: 3 5 6 7
+Definition (28)
+    à gauche: 8 9, à droite: 5
+DefinitionN (29)
+    à gauche: 10 12, à droite: 8 12
+$@2 (30)
+    à gauche: 11, à droite: 12
+Affectation (31)
+    à gauche: 13, à droite: 6
+Expression (32)
+    à gauche: 14 15 16 17 18 19 20, à droite: 9 13 16 17 18 19 20
+Fonction (33)
+    à gauche: 21, à droite: 7
 
 
 État 0
@@ -94,9 +122,11 @@ Fonction (29)
 
 État 1
 
-    2 Main: tMAIN . tPO tPF tAO Body tAF
+    3 Main: tMAIN . $@1 tPO tPF tAO Body tAF
 
-    tPO  décalage et aller à l'état 4
+    $défaut  réduction par utilisation de la règle 2 ($@1)
+
+    $@1  aller à l'état 4
 
 
 État 2
@@ -115,9 +145,9 @@ Fonction (29)
 
 État 4
 
-    2 Main: tMAIN tPO . tPF tAO Body tAF
+    3 Main: tMAIN $@1 . tPO tPF tAO Body tAF
 
-    tPF  décalage et aller à l'état 6
+    tPO  décalage et aller à l'état 6
 
 
 État 5
@@ -129,414 +159,430 @@ Fonction (29)
 
 État 6
 
-    2 Main: tMAIN tPO tPF . tAO Body tAF
+    3 Main: tMAIN $@1 tPO . tPF tAO Body tAF
 
-    tAO  décalage et aller à l'état 7
+    tPF  décalage et aller à l'état 7
 
 
 État 7
 
-    2 Main: tMAIN tPO tPF tAO . Body tAF
+    3 Main: tMAIN $@1 tPO tPF . tAO Body tAF
 
-    tINT     décalage et aller à l'état 8
-    tPRINTF  décalage et aller à l'état 9
-    tID      décalage et aller à l'état 10
-
-    $défaut  réduction par utilisation de la règle 3 (Body)
-
-    Body         aller à l'état 11
-    Definition   aller à l'état 12
-    Affectation  aller à l'état 13
-    Fonction     aller à l'état 14
+    tAO  décalage et aller à l'état 8
 
 
 État 8
 
-    7 Definition: tINT . tID DefinitionN tPV
-    8           | tINT . tID tEGAL Expression tPV
+    3 Main: tMAIN $@1 tPO tPF tAO . Body tAF
 
-    tID  décalage et aller à l'état 15
+    tINT     décalage et aller à l'état 9
+    tPRINTF  décalage et aller à l'état 10
+    tID      décalage et aller à l'état 11
+
+    $défaut  réduction par utilisation de la règle 4 (Body)
+
+    Body         aller à l'état 12
+    Definition   aller à l'état 13
+    Affectation  aller à l'état 14
+    Fonction     aller à l'état 15
 
 
 État 9
 
-   19 Fonction: tPRINTF . tPO tID tPF tPV
+    8 Definition: tINT . tID DefinitionN tPV
+    9           | tINT . tID tEGAL Expression tPV
 
-    tPO  décalage et aller à l'état 16
+    tID  décalage et aller à l'état 16
 
 
 État 10
 
-   11 Affectation: tID . tEGAL Expression tPV
+   21 Fonction: tPRINTF . tPO tID tPF tPV
 
-    tEGAL  décalage et aller à l'état 17
+    tPO  décalage et aller à l'état 17
 
 
 État 11
 
-    2 Main: tMAIN tPO tPF tAO Body . tAF
+   13 Affectation: tID . tEGAL Expression tPV
 
-    tAF  décalage et aller à l'état 18
+    tEGAL  décalage et aller à l'état 18
 
 
 État 12
 
-    4 Body: Definition . Body
+    3 Main: tMAIN $@1 tPO tPF tAO Body . tAF
 
-    tINT     décalage et aller à l'état 8
-    tPRINTF  décalage et aller à l'état 9
-    tID      décalage et aller à l'état 10
-
-    $défaut  réduction par utilisation de la règle 3 (Body)
-
-    Body         aller à l'état 19
-    Definition   aller à l'état 12
-    Affectation  aller à l'état 13
-    Fonction     aller à l'état 14
+    tAF  décalage et aller à l'état 19
 
 
 État 13
 
-    5 Body: Affectation . Body
+    5 Body: Definition . Body
 
-    tINT     décalage et aller à l'état 8
-    tPRINTF  décalage et aller à l'état 9
-    tID      décalage et aller à l'état 10
+    tINT     décalage et aller à l'état 9
+    tPRINTF  décalage et aller à l'état 10
+    tID      décalage et aller à l'état 11
 
-    $défaut  réduction par utilisation de la règle 3 (Body)
+    $défaut  réduction par utilisation de la règle 4 (Body)
 
     Body         aller à l'état 20
-    Definition   aller à l'état 12
-    Affectation  aller à l'état 13
-    Fonction     aller à l'état 14
+    Definition   aller à l'état 13
+    Affectation  aller à l'état 14
+    Fonction     aller à l'état 15
 
 
 État 14
 
-    6 Body: Fonction . Body
+    6 Body: Affectation . Body
 
-    tINT     décalage et aller à l'état 8
-    tPRINTF  décalage et aller à l'état 9
-    tID      décalage et aller à l'état 10
+    tINT     décalage et aller à l'état 9
+    tPRINTF  décalage et aller à l'état 10
+    tID      décalage et aller à l'état 11
 
-    $défaut  réduction par utilisation de la règle 3 (Body)
+    $défaut  réduction par utilisation de la règle 4 (Body)
 
     Body         aller à l'état 21
-    Definition   aller à l'état 12
-    Affectation  aller à l'état 13
-    Fonction     aller à l'état 14
+    Definition   aller à l'état 13
+    Affectation  aller à l'état 14
+    Fonction     aller à l'état 15
 
 
 État 15
 
-    7 Definition: tINT tID . DefinitionN tPV
-    8           | tINT tID . tEGAL Expression tPV
+    7 Body: Fonction . Body
 
-    tVR    décalage et aller à l'état 22
-    tEGAL  décalage et aller à l'état 23
+    tINT     décalage et aller à l'état 9
+    tPRINTF  décalage et aller à l'état 10
+    tID      décalage et aller à l'état 11
 
-    $défaut  réduction par utilisation de la règle 9 (DefinitionN)
+    $défaut  réduction par utilisation de la règle 4 (Body)
 
-    DefinitionN  aller à l'état 24
+    Body         aller à l'état 22
+    Definition   aller à l'état 13
+    Affectation  aller à l'état 14
+    Fonction     aller à l'état 15
 
 
 État 16
 
-   19 Fonction: tPRINTF tPO . tID tPF tPV
+    8 Definition: tINT tID . DefinitionN tPV
+    9           | tINT tID . tEGAL Expression tPV
 
-    tID  décalage et aller à l'état 25
+    tVR    décalage et aller à l'état 23
+    tEGAL  décalage et aller à l'état 24
+
+    $défaut  réduction par utilisation de la règle 10 (DefinitionN)
+
+    DefinitionN  aller à l'état 25
 
 
 État 17
 
-   11 Affectation: tID tEGAL . Expression tPV
+   21 Fonction: tPRINTF tPO . tID tPF tPV
 
-    tPO  décalage et aller à l'état 26
-    tNB  décalage et aller à l'état 27
-    tID  décalage et aller à l'état 28
-
-    Expression  aller à l'état 29
+    tID  décalage et aller à l'état 26
 
 
 État 18
 
-    2 Main: tMAIN tPO tPF tAO Body tAF .
+   13 Affectation: tID tEGAL . Expression tPV
 
-    $défaut  réduction par utilisation de la règle 2 (Main)
+    tPO  décalage et aller à l'état 27
+    tNB  décalage et aller à l'état 28
+    tID  décalage et aller à l'état 29
+
+    Expression  aller à l'état 30
 
 
 État 19
 
-    4 Body: Definition Body .
+    3 Main: tMAIN $@1 tPO tPF tAO Body tAF .
 
-    $défaut  réduction par utilisation de la règle 4 (Body)
+    $défaut  réduction par utilisation de la règle 3 (Main)
 
 
 État 20
 
-    5 Body: Affectation Body .
+    5 Body: Definition Body .
 
     $défaut  réduction par utilisation de la règle 5 (Body)
 
 
 État 21
 
-    6 Body: Fonction Body .
+    6 Body: Affectation Body .
 
     $défaut  réduction par utilisation de la règle 6 (Body)
 
 
 État 22
 
-   10 DefinitionN: tVR . tID DefinitionN
+    7 Body: Fonction Body .
 
-    tID  décalage et aller à l'état 30
+    $défaut  réduction par utilisation de la règle 7 (Body)
 
 
 État 23
 
-    8 Definition: tINT tID tEGAL . Expression tPV
+   12 DefinitionN: tVR . tID $@2 DefinitionN
 
-    tPO  décalage et aller à l'état 26
-    tNB  décalage et aller à l'état 27
-    tID  décalage et aller à l'état 28
-
-    Expression  aller à l'état 31
+    tID  décalage et aller à l'état 31
 
 
 État 24
 
-    7 Definition: tINT tID DefinitionN . tPV
+    9 Definition: tINT tID tEGAL . Expression tPV
 
-    tPV  décalage et aller à l'état 32
+    tPO  décalage et aller à l'état 27
+    tNB  décalage et aller à l'état 28
+    tID  décalage et aller à l'état 29
+
+    Expression  aller à l'état 32
 
 
 État 25
 
-   19 Fonction: tPRINTF tPO tID . tPF tPV
+    8 Definition: tINT tID DefinitionN . tPV
 
-    tPF  décalage et aller à l'état 33
+    tPV  décalage et aller à l'état 33
 
 
 État 26
 
-   14 Expression: tPO . Expression tPF
+   21 Fonction: tPRINTF tPO tID . tPF tPV
 
-    tPO  décalage et aller à l'état 26
-    tNB  décalage et aller à l'état 27
-    tID  décalage et aller à l'état 28
-
-    Expression  aller à l'état 34
+    tPF  décalage et aller à l'état 34
 
 
 État 27
 
-   13 Expression: tNB .
+   16 Expression: tPO . Expression tPF
 
-    $défaut  réduction par utilisation de la règle 13 (Expression)
+    tPO  décalage et aller à l'état 27
+    tNB  décalage et aller à l'état 28
+    tID  décalage et aller à l'état 29
+
+    Expression  aller à l'état 35
 
 
 État 28
 
-   12 Expression: tID .
+   15 Expression: tNB .
 
-    $défaut  réduction par utilisation de la règle 12 (Expression)
+    $défaut  réduction par utilisation de la règle 15 (Expression)
 
 
 État 29
 
-   11 Affectation: tID tEGAL Expression . tPV
-   15 Expression: Expression . tPLUS Expression
-   16           | Expression . tMOINS Expression
-   17           | Expression . tDIV Expression
-   18           | Expression . tFOIS Expression
+   14 Expression: tID .
 
-    tPV     décalage et aller à l'état 35
-    tPLUS   décalage et aller à l'état 36
-    tMOINS  décalage et aller à l'état 37
-    tDIV    décalage et aller à l'état 38
-    tFOIS   décalage et aller à l'état 39
+    $défaut  réduction par utilisation de la règle 14 (Expression)
 
 
 État 30
 
-   10 DefinitionN: tVR tID . DefinitionN
+   13 Affectation: tID tEGAL Expression . tPV
+   17 Expression: Expression . tPLUS Expression
+   18           | Expression . tMOINS Expression
+   19           | Expression . tDIV Expression
+   20           | Expression . tFOIS Expression
 
-    tVR  décalage et aller à l'état 22
-
-    $défaut  réduction par utilisation de la règle 9 (DefinitionN)
-
-    DefinitionN  aller à l'état 40
+    tPV     décalage et aller à l'état 36
+    tPLUS   décalage et aller à l'état 37
+    tMOINS  décalage et aller à l'état 38
+    tDIV    décalage et aller à l'état 39
+    tFOIS   décalage et aller à l'état 40
 
 
 État 31
 
-    8 Definition: tINT tID tEGAL Expression . tPV
-   15 Expression: Expression . tPLUS Expression
-   16           | Expression . tMOINS Expression
-   17           | Expression . tDIV Expression
-   18           | Expression . tFOIS Expression
+   12 DefinitionN: tVR tID . $@2 DefinitionN
 
-    tPV     décalage et aller à l'état 41
-    tPLUS   décalage et aller à l'état 36
-    tMOINS  décalage et aller à l'état 37
-    tDIV    décalage et aller à l'état 38
-    tFOIS   décalage et aller à l'état 39
+    $défaut  réduction par utilisation de la règle 11 ($@2)
+
+    $@2  aller à l'état 41
 
 
 État 32
 
-    7 Definition: tINT tID DefinitionN tPV .
+    9 Definition: tINT tID tEGAL Expression . tPV
+   17 Expression: Expression . tPLUS Expression
+   18           | Expression . tMOINS Expression
+   19           | Expression . tDIV Expression
+   20           | Expression . tFOIS Expression
 
-    $défaut  réduction par utilisation de la règle 7 (Definition)
+    tPV     décalage et aller à l'état 42
+    tPLUS   décalage et aller à l'état 37
+    tMOINS  décalage et aller à l'état 38
+    tDIV    décalage et aller à l'état 39
+    tFOIS   décalage et aller à l'état 40
 
 
 État 33
 
-   19 Fonction: tPRINTF tPO tID tPF . tPV
+    8 Definition: tINT tID DefinitionN tPV .
 
-    tPV  décalage et aller à l'état 42
+    $défaut  réduction par utilisation de la règle 8 (Definition)
 
 
 État 34
 
-   14 Expression: tPO Expression . tPF
-   15           | Expression . tPLUS Expression
-   16           | Expression . tMOINS Expression
-   17           | Expression . tDIV Expression
-   18           | Expression . tFOIS Expression
+   21 Fonction: tPRINTF tPO tID tPF . tPV
 
-    tPF     décalage et aller à l'état 43
-    tPLUS   décalage et aller à l'état 36
-    tMOINS  décalage et aller à l'état 37
-    tDIV    décalage et aller à l'état 38
-    tFOIS   décalage et aller à l'état 39
+    tPV  décalage et aller à l'état 43
 
 
 État 35
 
-   11 Affectation: tID tEGAL Expression tPV .
+   16 Expression: tPO Expression . tPF
+   17           | Expression . tPLUS Expression
+   18           | Expression . tMOINS Expression
+   19           | Expression . tDIV Expression
+   20           | Expression . tFOIS Expression
 
-    $défaut  réduction par utilisation de la règle 11 (Affectation)
+    tPF     décalage et aller à l'état 44
+    tPLUS   décalage et aller à l'état 37
+    tMOINS  décalage et aller à l'état 38
+    tDIV    décalage et aller à l'état 39
+    tFOIS   décalage et aller à l'état 40
 
 
 État 36
 
-   15 Expression: Expression tPLUS . Expression
+   13 Affectation: tID tEGAL Expression tPV .
 
-    tPO  décalage et aller à l'état 26
-    tNB  décalage et aller à l'état 27
-    tID  décalage et aller à l'état 28
-
-    Expression  aller à l'état 44
+    $défaut  réduction par utilisation de la règle 13 (Affectation)
 
 
 État 37
 
-   16 Expression: Expression tMOINS . Expression
+   17 Expression: Expression tPLUS . Expression
 
-    tPO  décalage et aller à l'état 26
-    tNB  décalage et aller à l'état 27
-    tID  décalage et aller à l'état 28
+    tPO  décalage et aller à l'état 27
+    tNB  décalage et aller à l'état 28
+    tID  décalage et aller à l'état 29
 
     Expression  aller à l'état 45
 
 
 État 38
 
-   17 Expression: Expression tDIV . Expression
+   18 Expression: Expression tMOINS . Expression
 
-    tPO  décalage et aller à l'état 26
-    tNB  décalage et aller à l'état 27
-    tID  décalage et aller à l'état 28
+    tPO  décalage et aller à l'état 27
+    tNB  décalage et aller à l'état 28
+    tID  décalage et aller à l'état 29
 
     Expression  aller à l'état 46
 
 
 État 39
 
-   18 Expression: Expression tFOIS . Expression
+   19 Expression: Expression tDIV . Expression
 
-    tPO  décalage et aller à l'état 26
-    tNB  décalage et aller à l'état 27
-    tID  décalage et aller à l'état 28
+    tPO  décalage et aller à l'état 27
+    tNB  décalage et aller à l'état 28
+    tID  décalage et aller à l'état 29
 
     Expression  aller à l'état 47
 
 
 État 40
 
-   10 DefinitionN: tVR tID DefinitionN .
+   20 Expression: Expression tFOIS . Expression
 
-    $défaut  réduction par utilisation de la règle 10 (DefinitionN)
+    tPO  décalage et aller à l'état 27
+    tNB  décalage et aller à l'état 28
+    tID  décalage et aller à l'état 29
+
+    Expression  aller à l'état 48
 
 
 État 41
 
-    8 Definition: tINT tID tEGAL Expression tPV .
+   12 DefinitionN: tVR tID $@2 . DefinitionN
 
-    $défaut  réduction par utilisation de la règle 8 (Definition)
+    tVR  décalage et aller à l'état 23
+
+    $défaut  réduction par utilisation de la règle 10 (DefinitionN)
+
+    DefinitionN  aller à l'état 49
 
 
 État 42
 
-   19 Fonction: tPRINTF tPO tID tPF tPV .
+    9 Definition: tINT tID tEGAL Expression tPV .
 
-    $défaut  réduction par utilisation de la règle 19 (Fonction)
+    $défaut  réduction par utilisation de la règle 9 (Definition)
 
 
 État 43
 
-   14 Expression: tPO Expression tPF .
+   21 Fonction: tPRINTF tPO tID tPF tPV .
 
-    $défaut  réduction par utilisation de la règle 14 (Expression)
+    $défaut  réduction par utilisation de la règle 21 (Fonction)
 
 
 État 44
 
-   15 Expression: Expression . tPLUS Expression
-   15           | Expression tPLUS Expression .
-   16           | Expression . tMOINS Expression
-   17           | Expression . tDIV Expression
-   18           | Expression . tFOIS Expression
-
-    tDIV   décalage et aller à l'état 38
-    tFOIS  décalage et aller à l'état 39
-
-    $défaut  réduction par utilisation de la règle 15 (Expression)
-
-
-État 45
-
-   15 Expression: Expression . tPLUS Expression
-   16           | Expression . tMOINS Expression
-   16           | Expression tMOINS Expression .
-   17           | Expression . tDIV Expression
-   18           | Expression . tFOIS Expression
-
-    tDIV   décalage et aller à l'état 38
-    tFOIS  décalage et aller à l'état 39
+   16 Expression: tPO Expression tPF .
 
     $défaut  réduction par utilisation de la règle 16 (Expression)
 
 
-État 46
+État 45
 
-   15 Expression: Expression . tPLUS Expression
-   16           | Expression . tMOINS Expression
-   17           | Expression . tDIV Expression
-   17           | Expression tDIV Expression .
-   18           | Expression . tFOIS Expression
+   17 Expression: Expression . tPLUS Expression
+   17           | Expression tPLUS Expression .
+   18           | Expression . tMOINS Expression
+   19           | Expression . tDIV Expression
+   20           | Expression . tFOIS Expression
+
+    tDIV   décalage et aller à l'état 39
+    tFOIS  décalage et aller à l'état 40
 
     $défaut  réduction par utilisation de la règle 17 (Expression)
 
 
-État 47
+État 46
 
-   15 Expression: Expression . tPLUS Expression
-   16           | Expression . tMOINS Expression
-   17           | Expression . tDIV Expression
-   18           | Expression . tFOIS Expression
-   18           | Expression tFOIS Expression .
+   17 Expression: Expression . tPLUS Expression
+   18           | Expression . tMOINS Expression
+   18           | Expression tMOINS Expression .
+   19           | Expression . tDIV Expression
+   20           | Expression . tFOIS Expression
+
+    tDIV   décalage et aller à l'état 39
+    tFOIS  décalage et aller à l'état 40
 
     $défaut  réduction par utilisation de la règle 18 (Expression)
+
+
+État 47
+
+   17 Expression: Expression . tPLUS Expression
+   18           | Expression . tMOINS Expression
+   19           | Expression . tDIV Expression
+   19           | Expression tDIV Expression .
+   20           | Expression . tFOIS Expression
+
+    $défaut  réduction par utilisation de la règle 19 (Expression)
+
+
+État 48
+
+   17 Expression: Expression . tPLUS Expression
+   18           | Expression . tMOINS Expression
+   19           | Expression . tDIV Expression
+   20           | Expression . tFOIS Expression
+   20           | Expression tFOIS Expression .
+
+    $défaut  réduction par utilisation de la règle 20 (Expression)
+
+
+État 49
+
+   12 DefinitionN: tVR tID $@2 DefinitionN .
+
+    $défaut  réduction par utilisation de la règle 12 (DefinitionN)
