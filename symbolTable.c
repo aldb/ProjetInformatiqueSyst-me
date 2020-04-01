@@ -10,16 +10,47 @@ int currentIndex = 0;
 int currentTempIndex = 100;
 int currentDepth = 0;
 
+int asmLine=0;
+
+char* asmTab[100]; 
+
+void printAsm(){
+	for(int i=0; i<asmLine; i++)
+	{
+		printf("%s \n", asmTab[i]);
+	}
+}
+
+void patch(int from, int to) {
+	char s[50];
+	sprintf(s,"%d",to);
+	asmTab[from]= strcat(asmTab[from],s);
+}
+
+int insert(char* instruction){
+	
+	asmTab[asmLine]=strdup(instruction);
+	asmLine++;
+	return asmLine-1;
+}
+
+int get_nb_lignes_asm()
+{
+	return asmLine; 
+}
+
 
 void initSymbolTab()
 {
 	symbolTab = malloc(103 * sizeof(Symbol));
+	
 }
 
 
 void freeSymbolTab()
 {
 	free(symbolTab);
+	
 }
 
 void suprimer_temp_var()
@@ -39,7 +70,7 @@ void add_symbol(char* id, int isConst)
 {
    	Symbol newSymbol = { id, isConst, currentDepth};
 	symbolTab[currentIndex] = newSymbol;
-	printf("index: %d ", currentIndex);
+	
 	currentIndex++;
 }
 
@@ -73,9 +104,10 @@ void decrementDepth()
 
 
 
-int isSymbolConst(Symbol symbol)
+int isSymbolConst(int addr)
 {
-	return symbol.isConst;
+	return symbolTab[addr].isConst;
+	
 }
 
 

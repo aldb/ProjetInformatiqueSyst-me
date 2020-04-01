@@ -4,7 +4,7 @@
     int yylex();
     void yyerror(char* str);
 %}
-%token tMAIN tINT tEQ  tPO tPF tAO tAF tPV tVR  tPLUS tMOINS tDIV tFOIS  tPRINTF tEGAL tCONST tIF tELSE 
+%token tMAIN tINT tEQ  tPO tPF tAO tAF tPV tVR  tPLUS tMOINS tDIV tFOIS  tPRINTF tEGAL tCONST tELSE tSUP tINF 
 
 %union{
         int nb; 
@@ -28,77 +28,72 @@
 File:
         Main; 
 Main:
-        tMAIN {initSymbolTab();} tPO tPF tAO Body tAF {freeSymbolTab();} ;
+        tMAIN {initSymbolTab();} tPO tPF tAO Body tAF {printAsm(); freeSymbolTab();} ;
 Body: 
         /*vide*/
         |Definition Body
         | Affectation Body
-        | Fonction Body;
+        | Fonction Body
+	| ifelse Body
+	|DefinitionConst Body;
 
 DefinitionConst: 
-	tCONST tINT tID DefinitionNC tPV { add_symbol ($3,1); }
-	| tCONST tINT tID tEGAL Expression tPV { addSymbol($3, 1),int addr= findSymbolById($3); printf("COP %d %d ",addr ,$5); suprimer_temp_var(); } ;
+	 tCONST tINT tID tEGAL Expression tPV { add_symbol($3, 1);int addr= findSymbolById($3); char s[50]; sprintf(s,"COP %d %d ",addr ,$5); insert(s);  suprimer_temp_var(); } ;
 
 Definition:
         tINT tID DefinitionN tPV { add_symbol ($2,0); }
-        | tINT tID tEGAL Expression tPV {add_symbol($2, 0) ;int addr= findSymbolById($2); printf("COP %d %d ",addr ,$4); suprimer_temp_var();}  ;
+        | tINT tID tEGAL Expression tPV {add_symbol($2, 0) ;int addr= findSymbolById($2); char s[50]; sprintf(s,"COP %d %d ",addr ,$4);insert(s); suprimer_temp_var();}  ;
 
 DefinitionN:
         /*vide*/
         | tVR tID { add_symbol ($2,0); } DefinitionN  ;
 
-DefinitionNC:
-        /*vide*/
-        | tVR tID DefinitionNC { add_symbol ($2,1); } ;
 
 Affectation: 
-        tID tEGAL Expression tPV {int addr= findSymbolById($1); printf("COP %d %d ",addr,$3); suprimer_temp_var();}
+        tID tEGAL Expression tPV {int addr= findSymbolById($1); if (isSymbolConst(addr)==0){ char s[50]; sprintf(s,"COP %d %d ",addr,$3);insert(s); suprimer_temp_var();}}
          
         ;
 
 Expression:
         tID { $$= findSymbolById($1); }
-        |tNB { int addr= new_temp_var();printf("AFC %d %d ", addr,$1); $$= addr;}
+        |tNB { int addr= new_temp_var();char s[50];sprintf(s,"AFC %d %d ", addr,$1); insert(s); $$= addr;}
         |tPO Expression tPF { $$=$2;}
-        |Expression tPLUS Expression {int addr= new_temp_var(); printf("ADD %d %d %d ", addr ,$1,$3); $$=addr; }
-        |Expression tMOINS Expression { int addr= new_temp_var(); printf("SOU %d %d %d ", addr ,$1,$3); $$=addr; }
-        |Expression tDIV Expression {int addr= new_temp_var(); printf("DIV %d %d %d ", addr ,$1,$3); $$=addr;}
-        |Expression tFOIS Expression {int addr= new_temp_var(); printf("MUL %d %d %d ", addr ,$1,$3); $$=addr; }
+        |Expression tPLUS Expression {int addr= new_temp_var(); char s[50]; sprintf(s,"ADD %d %d %d ", addr ,$1,$3); insert(s); $$=addr; }
+        |Expression tMOINS Expression { int addr= new_temp_var(); char s[50]; sprintf(s,"SOU %d %d %d ", addr ,$1,$3);insert(s); $$=addr; }
+        |Expression tDIV Expression {int addr= new_temp_var(); char s[50]; sprintf(s,"DIV %d %d %d ",addr ,$1, $3); insert(s) ; $$=addr;}
+        |Expression tFOIS Expression {int addr= new_temp_var(); char s[50]; sprintf(s,"MUL %d %d %d ", addr, $1, $3);insert(s); $$=addr; }
+	|Expression tEGAL tEGAL Expression{int addr= new_temp_var(); char s[50]; sprintf(s,"EQU %d %d %d ", addr ,$1,$4);insert(s); $$=addr;}
+	|Expression tSUP Expression{int addr= new_temp_var(); char s[50]; sprintf(s,"SUP %d %d %d ", addr ,$1,$3); insert(s); $$=addr;}
+	|Expression tINF Expression{int addr= new_temp_var(); char s[50]; sprintf(s,"INF %d %d %d ", addr ,$1,$3); insert(s); $$=addr;}
         ;
 
 Fonction: 
-        tPRINTF tPO tID tPF tPV {int addr=findSymbolById($3); printf("PRI %d",addr); }
+        tPRINTF tPO tID tPF tPV {int addr=findSymbolById($3); char s[50]; sprintf(s, "PRI %d",addr); insert(s); }
         ;
 
-if: 
-	tIF tPO Expression tPf tAO Body tAF
 
-	;
 ifelse: 
-	tIF tPO Expression tPf 
-		{	fprintf(f, « JMPF ???\n ») ;
-			int ligne = get_nb_lignes_asm() ; // ligne == L2
-			$1 = ligne ;
-		}	
+	tIF tPO Expression tPF 
+		{	char s[50]; sprintf(s,"JMF %d ",$3);int ligne = insert(s); 
+			$1 = ligne;
+		}
 	
 	tAO Body tAF 
-		{	int current = get_nb_lignes_asm() ; // current == 4
-			patch($1, current + 2) ;
-			int ligne = insert(JMP) ; // ligne == L5
-			$1 = ligne ;
+		{	int current = get_nb_lignes_asm(); 
+			patch($1, current + 2);
+			int ligne = insert("JMP ");  
+			$1 = ligne;
 		}
-
 	tELSE tAO Body tAF
-		{	int current = get_nb_lignes_asm() ; // current == 6
-			patch($1, current + 1) ;
+		{	int current = get_nb_lignes_asm();
+			patch($1, current + 1);
 		}
 
-	;	
+;
 
-void patch(int from, int to) {
-	/* Mémorisation pour patcher apres la compilation. */
-	labels[from] = to ;
-}
+
+
+
 
 
 

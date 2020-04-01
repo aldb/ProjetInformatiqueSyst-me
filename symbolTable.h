@@ -8,6 +8,15 @@ struct Symbol
 
 typedef struct Symbol Symbol;
 
+void printAsm();
+
+void patch(int from, int to) ;
+
+int insert(char* instruction);
+
+int get_nb_lignes_asm();
+
+void plusasm();
 
 void initSymbolTab();
 
@@ -27,4 +36,4 @@ void decrementDepth();
 
 int isSymbolInit(Symbol symbol);
 
-int isSymbolConst(Symbol symbol);
+int isSymbolConst(int addr);

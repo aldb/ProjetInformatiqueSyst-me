@@ -18,6 +18,8 @@
 "*" return(tFOIS); 
 "/" return(tDIV);
 "=" return(tEGAL);
+"<" return(tINF);
+">" return(tSUP);
 ";" return(tPV);
 "," return(tVR);
 "\t" {}

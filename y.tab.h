@@ -61,10 +61,12 @@ extern int yydebug;
     tPRINTF = 271,
     tEGAL = 272,
     tCONST = 273,
-    tIF = 274,
-    tELSE = 275,
-    tNB = 276,
-    tID = 277
+    tELSE = 274,
+    tSUP = 275,
+    tINF = 276,
+    tNB = 277,
+    tIF = 278,
+    tID = 279
   };
 #endif
 /* Tokens.  */
@@ -84,10 +86,12 @@ extern int yydebug;
 #define tPRINTF 271
 #define tEGAL 272
 #define tCONST 273
-#define tIF 274
-#define tELSE 275
-#define tNB 276
-#define tID 277
+#define tELSE 274
+#define tSUP 275
+#define tINF 276
+#define tNB 277
+#define tIF 278
+#define tID 279
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -99,7 +103,7 @@ union YYSTYPE
         int nb; 
         char* str;
 
-#line 103 "y.tab.h" /* yacc.c:1909  */
+#line 107 "y.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
