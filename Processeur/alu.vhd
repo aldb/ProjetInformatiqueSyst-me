@@ -53,28 +53,49 @@ begin
     if Ctrl_Alu="001"	 then
          resultat_tmp <= (b"0" & a) + (b"0" & b);
 			S <= resultat_tmp(7 downto 0);
+			if resultat_tmp= x"0" then
+				Flag_z <= "1";
+			else 
+				Flag_z <= "0";
+			end if;
+			Flag_n <= resultat_tmp(7);
 			Flag_c <= resultat_tmp(8);
 			Flag_o <= resultat_tmp(8);
 		  --soustraction 
-    else if Ctrl_Alu="011" then
-			resultat_tmp <= (b"0" & a) - (b"0" & b);
-			S <= resultat_tmp(7 downto 0);			
-			Flag_c <= resultat_tmp(8);
-			Flag_n <= resultat_tmp(7);
-			Flag_o <= resultat_tmp(8);
+    else 
+			if Ctrl_Alu="011" then
+				resultat_tmp <= (b"0" & a) - (b"0" & b);
+				S <= resultat_tmp(7 downto 0);
+				if resultat_tmp= x"0" then
+					Flag_z <= "1";
+				else 
+					Flag_z <= "0";
+				end if;
+				Flag_c <= resultat_tmp(8);
+				Flag_n <= resultat_tmp(7);
+				Flag_o <= resultat_tmp(8);
 				--multiplication 
-				else if Ctrl_Alu="010" then 
+			else 
+					if Ctrl_Alu="010" then 
 							resultat_tmp_mul<= a*b;
 							S <= resultat_tmp_mul(7 downto 0);
 							if resultat_tmp_mul(14 downto 8)/= x"0" then 
 								Flag_o <= '1';
+							else
+								Flag_o <= '0';
 							end if; 
-					
+							
+							if resultat_tmp = x"0" then
+								Flag_z <= "1";
+							else 
+								Flag_z <= "0";
 							end if;
-						end if; 
-			end if;
-		
-end process;
+							Flag_c <= "0";
+							Flag_n <= resultat_tmp(7);
+			 end if;
+	end if; 
+end if;
+end process p;
 
 
 
