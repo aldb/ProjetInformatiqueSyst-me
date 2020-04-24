@@ -2,9 +2,9 @@
 -- Company: 
 -- Engineer: 
 -- 
--- Create Date: 24.04.2020 14:49:57
+-- Create Date: 24.04.2020 15:25:46
 -- Design Name: 
--- Module Name: Register - Behavioral
+-- Module Name: data_memory - Behavioral
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
@@ -33,36 +33,33 @@ use IEEE.NUMERIC_STD.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity Registre is
-    Port ( atA : in STD_LOGIC_VECTOR (3 downto 0);
-           atB : in STD_LOGIC_VECTOR (3 downto 0);
-           atW : in STD_LOGIC_VECTOR (3 downto 0);
-           W : in STD_LOGIC;
-           DATA : in STD_LOGIC_VECTOR (7 downto 0);
+entity data_memory is
+    Port ( addr : in STD_LOGIC_VECTOR (7 downto 0);
+           data_IN : in STD_LOGIC_VECTOR (7 downto 0);
+           RW : in STD_LOGIC;
            RST : in STD_LOGIC;
            CLK : in STD_LOGIC;
-           QA : out STD_LOGIC_VECTOR (7 downto 0);
-           QB : out STD_LOGIC_VECTOR (7 downto 0));
-end Registre;
+           data_OUT : out STD_LOGIC_VECTOR (7 downto 0));
+end data_memory;
 
-architecture Behavioral of Registre is
-    type Registre is array (0 to 15) of STD_LOGIC_VECTOR (7 downto 0);
-    signal Reg : Registre := (others => (others => '0'));
-
+architecture Behavioral of data_memory is
+    type data_memory is array (0 to 15) of STD_LOGIC_VECTOR (7 downto 0);
+    signal Mem : data_memory := (others => (others => '0'));
+    
 begin
+
     p : process
         begin
             wait until CLK'event and CLK= '1';
             if RST = '0' then
-                Reg  <= (others => (others => '0'));
+                Mem  <= (others => (others => '0'));
             else
-                if W = '1' then
-                    Reg(to_integer(unsigned(atW))) <= DATA;
+                if RW = '1' then
+                    Mem(to_integer(unsigned(addr))) <= data_IN;
+                else
+                    data_OUT <= Mem(to_integer(unsigned(addr)));
                 end if;
             end if;
     end process p;
-    
-    QA <= Reg(to_integer(unsigned(atA))) when atW /= atA else DATA;
-    QB <= Reg(to_integer(unsigned(atB))) when atW /= atB else DATA;
 
 end Behavioral;
