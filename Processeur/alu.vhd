@@ -60,10 +60,11 @@ begin
 			end if;
 			Flag_n <= resultat_tmp(7);
 			Flag_c <= resultat_tmp(8);
-			if (a(7)="1" and b(7)="1" and resultat_tmp(8)="0") or (a(7)="0" and b(7)="0" and resultat_tmp(8)="1")
-				Flag_o <=1;
+			if (a(7)="1" and b(7)="1" and resultat_tmp(8)="0") or (a(7)="0" and b(7)="0" and resultat_tmp(8)="1") then
+				Flag_o <="1";
 			else 
-				Flag_o <=0;
+				Flag_o <="0";
+			end if; 
 		  --soustraction 
     else 
 			if Ctrl_Alu="011" then
@@ -77,11 +78,12 @@ begin
 				Flag_c <= resultat_tmp(8);
 				Flag_n <= resultat_tmp(7);
 				
-				if (a(7)="0" and b(7)="1" and resultat_tmp(8)="1") or (a(7)="1" and b(7)="0" and resultat_tmp(8)="0")
-					Flag_o <=1;
+				if (a(7)="0" and b(7)="1" and resultat_tmp(8)="1") or (a(7)="1" and b(7)="0" and resultat_tmp(8)="0") then
+					Flag_o <= "1";
 				else 
-					Flag_o <=0;
+					Flag_o <= "0";
 				--multiplication 
+				end if; 
 			else 
 					if Ctrl_Alu="010" then 
 							resultat_tmp_mul<= a*b;
