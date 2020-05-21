@@ -52,7 +52,7 @@ architecture Behavioral of Registre is
 begin
     p : process
         begin
-            wait until CLK'event and CLK= '1';
+            wait until CLK'event and CLK= '0';
             if RST = '0' then
                 Reg  <= (others => (others => '0'));
             else
