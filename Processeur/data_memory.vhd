@@ -43,11 +43,11 @@ entity data_memory is
 end data_memory;
 
 architecture Behavioral of data_memory is
-    type data_memory is array (0 to 15) of STD_LOGIC_VECTOR (7 downto 0);
+    type data_memory is array (0 to 255) of STD_LOGIC_VECTOR (7 downto 0);
     signal Mem : data_memory := (others => (others => '0'));
     
 begin
-
+    
     p : process
         begin
             wait until CLK'event and CLK= '1';
@@ -61,5 +61,4 @@ begin
                 end if;
             end if;
     end process p;
-
 end Behavioral;

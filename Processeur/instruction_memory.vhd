@@ -42,7 +42,14 @@ end instruction_memory;
 architecture Behavioral of instruction_memory is
     type instruction_memory is array (0 to 255) of STD_LOGIC_VECTOR (31 downto 0);
     signal ins : instruction_memory := (
-    0 => x"0601AB00"
+    0 => x"06010300", -- affec
+    10 => x"05020100", -- copy
+    20 => x"02030202", -- mul
+    25 => x"03010203", -- sub
+    30 => x"01040202", -- add
+    35 => x"08020100", -- store 6
+    40 => x"07060200", -- load
+    others => x"90FFFFFF"
     );
 
 begin
