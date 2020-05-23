@@ -35,7 +35,12 @@ use ieee.numeric_std.ALL;
 
 entity processor is
   Port ( CLK : in STD_LOGIC;
-         RESET : in STD_LOGIC);
+         RESET : in STD_LOGIC;
+			C_3 : out  STD_LOGIC_VECTOR (7 downto 0);
+			C_2 : out  STD_LOGIC_VECTOR (7 downto 0);
+			C_1 : out  STD_LOGIC_VECTOR (7 downto 0);
+			instru_OUT : out STD_LOGIC_VECTOR (31 downto 0);
+			data_OUT : out  STD_LOGIC_VECTOR (7 downto 0));
 end processor;
 
 architecture Behavioral of processor is
@@ -120,7 +125,7 @@ architecture Behavioral of processor is
     
     signal LiDi_Pip_OP, DiEx_Pip_OP, ExMem_Pip_OP, MemRe_Pip_OP : STD_LOGIC_VECTOR (3 downto 0);
     signal LiDi_Pip_A, LiDi_Pip_B, LiDi_Pip_C, DiEx_Pip_A, DiEx_Pip_B, DiEx_Pip_C, ExMem_Pip_A, ExMem_Pip_B, ExMem_Pip_C, MemRe_Pip_A, MemRe_Pip_B, MemRe_Pip_C : STD_LOGIC_VECTOR (7 downto 0);
-    signal ExMem_Pip_aux : STD_LOGIC_VECTOR (7 downto 0);
+    signal MemRe_Pip_aux : STD_LOGIC_VECTOR (7 downto 0);
 begin
 
 
@@ -148,7 +153,7 @@ BancReg : registre
         atB => LiDi_Pip_C (3 downto 0),
         atW => MemRe_Pip_A (3 downto 0),
         W => LC3,
-        DATA => MemRe_Pip_B,
+        DATA => MemRe_Pip_aux,
         RST => RESET,
         CLK => CLK,
         QA => BancReg_QA,
@@ -216,7 +221,7 @@ ExMem_Pip : pipeline
 MemRe_Pip : pipeline
     PORT MAP (
         OP_in => ExMem_Pip_OP,
-        A_in => ExMem_Pip_aux,
+        A_in => ExMem_Pip_A,
         B_in => Mux4,
         C_in => x"00",
         OP_out => MemRe_Pip_OP,
@@ -244,8 +249,8 @@ Mux4 <= Data_Mem_OUT when MemRe_Pip_OP = x"7"
    else ExMem_Pip_B;
    
    
-ExMem_Pip_aux <= MemRe_Pip_A when MemRe_Pip_OP = x"7"
-          else ExMem_Pip_A; -- corrige le retard de data_memory au load
+MemRe_Pip_aux <= Mux4 when MemRe_Pip_OP = x"7"
+          else MemRe_Pip_B; -- corrige le retard de data_memory au load
 
    
 LC1 <= DiEx_Pip_OP;
@@ -264,5 +269,9 @@ Ins_Out_B <= Instu_Mem_OUT (15 downto 8);
 
 Ins_Out_C <= Instu_Mem_OUT (7 downto 0);
 
-
+data_OUT <= Data_Mem_OUT;
+instru_OUT <= Instu_Mem_OUT;
+C_1 <= LiDi_Pip_C;
+C_2 <= MemRe_Pip_B;
+C_3 <= ExMem_Pip_B;
 end Behavioral;
